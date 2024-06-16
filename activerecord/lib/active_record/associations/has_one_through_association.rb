@@ -34,7 +34,12 @@ module ActiveRecord
                 through_record.update(attributes)
               end
             elsif owner.new_record? || !save
-              through_proxy.build(attributes)
+              if record.new_record?
+                assoc_name = reflection.source_reflection_name
+                through_proxy.build({ assoc_name => record })
+              else
+                through_proxy.build(attributes)
+              end
             else
               through_proxy.create(attributes)
             end
